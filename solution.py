@@ -12,6 +12,9 @@ class Solution:
         self.list_capt = [0 for x in range(self.instance.size)]
         self.list_count_capt = [0 for x in range(self.instance.size)]
 
+    def get_size(self):
+        return sum([1 for t in self.list_capt if t == 1])
+
     def to_string(self):
         s = ""
         for i in range(self.instance.size):
@@ -87,6 +90,14 @@ class Solution:
             for neighbor in self.instance.get_target(rank).get_neighbors_capt():
                 self.list_count_capt[neighbor] += -1
 
+    def add_random_capt(self, nb):
+        while nb>0 and self.get_size() < self.instance.size:
+            target = random.randrange(1,self.instance.size)
+            if self.list_capt[target] == 0:
+                self.set_capt(target)
+            nb -=1
+
+
     def generate_random_capt(self):
         #for i in range(self.instance.size):
         #    if random.random() < 0.4:
@@ -109,7 +120,7 @@ class Solution:
             for neighbor in neighbors:
                 if self.list_capt[neighbor] == 1:
                     continue
-                xx = sum([1 for n in self.instance.get_target(neighbor).get_neighbors_com() if self.list_capt[n]==0])
+                xx = sum([1 for n in self.instance.get_target(neighbor).get_neighbors_capt() if self.list_capt[n]==0])
                 if xx > best_next[1]:
                     best_next = (neighbor, xx)
                     #if xx == maxi[R_COM] - 2:
