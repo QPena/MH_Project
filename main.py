@@ -4,17 +4,17 @@ from instance import Instance
 from solution import Solution
 
 GRID_SIZE = 40
-R_CAPT = 1
-R_COM = 1
+R_CAPT = 2
+R_COM = 3
 
 instance = Instance(R_CAPT, R_COM)
 
 time1 = time.time()
 
-#instance.create_grid(GRID_SIZE)
+instance.create_grid(GRID_SIZE)
 #instance.create_from_file("Instances\\captANOR225_9_20.dat")
 #instance.create_from_file("Instances\\captANOR400_10_80.dat")
-instance.create_from_file("Instances\\captANOR1500_15_100.dat")
+#instance.create_from_file("Instances\\captANOR1500_15_100.dat")
 #instance.create_from_file("Instances\\captANOR1500_21_500.dat")
 
 time_construc_grid = time.time()

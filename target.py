@@ -1,4 +1,5 @@
 import math
+import itertools
 
 class Target:
 
@@ -10,6 +11,14 @@ class Target:
 
     def __str__(self):
         return "Target (" + str(self.coordinates[0]) + " , " + str(self.coordinates[1]) + ") " + str(self.neighbors_capt)
+
+    def get_neighbors_capt(self):
+        #return self.neighbors_capt
+        return iter(self.neighbors_capt)
+
+    def get_neighbors_com(self):
+        #return self.neighbors_capt + self.neighbors_com
+        return itertools.chain(iter(self.neighbors_com),iter(self.neighbors_capt))
 
     def distance(self, target):
         (i,j) = self.coordinates

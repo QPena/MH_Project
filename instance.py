@@ -26,10 +26,8 @@ class Instance :
 
     def create_from_file(self, filename):
         with open(filename, 'r') as file:
-            print("Reading")
             for line in file:
                 data = line.split()
-                print(data)
                 self.targets.append(Target(float(data[1]), float(data[2]), int(data[0])))
                 self.size += 1
 
@@ -39,9 +37,9 @@ class Instance :
                 neighbor = self.get_target(j)
                 if target.distance(neighbor) <= self.R_CAPT:
                     target.neighbors_capt.append(j)
-                    target.neighbors_com.append(j)
+                    #target.neighbors_com.append(j)
                     neighbor.neighbors_capt.append(target.n)
-                    neighbor.neighbors_com.append(target.n)
+                    #neighbor.neighbors_com.append(target.n)
                 elif target.distance(neighbor) <= self.R_COM:
                     target.neighbors_com.append(j)
                     neighbor.neighbors_com.append(target.n)

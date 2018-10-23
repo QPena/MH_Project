@@ -78,11 +78,11 @@ class Solution:
     def set_capt(self, rank):
         if self.list_capt[rank] == 0:
             self.list_capt[rank] = 1
-            for neighbor in self.instance.get_target(rank).neighbors_capt:
+            for neighbor in self.instance.get_target(rank).get_neighbors_capt():
                 self.list_count_capt[neighbor] += 1
         else:
             self.list_capt[rank] = 0
-            for neighbor in self.instance.get_target(rank).neighbors_capt:
+            for neighbor in self.instance.get_target(rank).get_neighbors_capt():
                 self.list_count_capt[neighbor] += -1
 
     def generate_random_capt(self):
@@ -94,7 +94,7 @@ class Solution:
 
     def generate_covering_com_solution(self):
         def add_neighbors(rank):
-            for nei in self.instance.get_target(rank).neighbors_com:
+            for nei in self.instance.get_target(rank).get_neighbors_com():
                 if nei !=0 and nei not in neighbors and self.list_capt[nei] == 0:
                     neighbors.add(nei)
             neighbors.remove(rank)
@@ -107,7 +107,7 @@ class Solution:
             for neighbor in neighbors:
                 if self.list_capt[neighbor] == 1:
                     continue
-                xx = sum([1 for n in self.instance.get_target(neighbor).neighbors_com if self.list_capt[n]==0])
+                xx = sum([1 for n in self.instance.get_target(neighbor).get_neighbors_com() if self.list_capt[n]==0])
                 if xx > best_next[1]:
                     best_next = (neighbor, xx)
                     #if xx == maxi[R_COM] - 2:
@@ -126,7 +126,7 @@ class Solution:
             removable = False
             if self.list_count_capt[t] > 0:
                 removable = True
-                for n in self.instance.get_target(t).neighbors_capt:
+                for n in self.instance.get_target(t).get_neighbors_capt():
                     if self.list_capt[n] == 0 and self.list_count_capt[n] < 2:
                     #if self.list_count_capt[n] < 2:
                         removable = False
@@ -159,7 +159,7 @@ class Solution:
         path = [0]
         capts = [x for x in range(self.instance.size) if self.list_capt[x]==1]
         for i in path:
-            for neighbor in self.instance.get_target(i).neighbors_com:
+            for neighbor in self.instance.get_target(i).get_neighbors_com():
                 if self.list_capt[neighbor] == 1 and not neighbor in path:
                     path.append(neighbor)
         return len(path) == len(capts) + 1
