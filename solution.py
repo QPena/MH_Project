@@ -1,6 +1,8 @@
 import math
 import random
 
+import time
+
 from instance import Instance
 
 class Solution:
@@ -114,15 +116,39 @@ class Solution:
                     #    break;
             #self.instance.get_target(best_next[0]).setCapt(self.list_capt, self.list_count_capt)
             self.set_capt(best_next[0])
-            print(str(sum([1 for t in self.list_count_capt if t == 0])))
 
             if(best_next[0] == -1): break
             add_neighbors(best_next[0])
 
     def improve(self):
+        time_1 = 0
+        time_2 = 0
         for t in range(1, self.instance.size):
             if self.list_capt[t] == 0:
                 continue
+            removable = False
+            if self.list_count_capt[t] > 0:
+                time_init = time.time()
+                removable = True
+                for n in self.instance.get_target(t).get_neighbors_capt():
+                    if self.list_capt[n] == 0 and self.list_count_capt[n] < 2:
+                    #if self.list_count_capt[n] < 2:
+                        removable = False
+                        break;
+            time_inter = time.time()
+            time_1 += time_inter - time_init
+            if removable:
+                self.set_capt(t)
+                if not self.is_comm_path2():
+                    self.set_capt(t)
+            time_out = time.time()
+            time_2 += time_out - time_inter
+        return time_1, time_2
+
+    def improve_random(self):
+        capts = [x for x in range(self.instance.size) if self.list_capt[x]==1]
+        while len(capts) > 0:
+            t = capts[random.randrange(len(capts))]
             removable = False
             if self.list_count_capt[t] > 0:
                 removable = True
@@ -133,24 +159,7 @@ class Solution:
                         break;
             if removable:
                 self.set_capt(t)
-                if not self.is_comm_path():
-                    self.set_capt(t)
-
-    def improve_random(self):
-        capts = [x for x in range(self.instance.size) if self.list_capt[x]==1]
-        while len(capts) > 0:
-            t = capts[random.randrange(len(capts))]
-            removable = False
-            if self.list_count_capt[t] > 0:
-                removable = True
-                for n in self.instance.get_target(t).neighbors_capt:
-                    if self.list_capt[n] == 0 and self.list_count_capt[n] < 2:
-                    #if self.list_count_capt[n] < 2:
-                        removable = False
-                        break;
-            if removable:
-                self.set_capt(t)
-                if not self.is_comm_path():
+                if not self.is_comm_path2():
                     self.set_capt(t)
             capts.remove(t)
 
@@ -162,4 +171,18 @@ class Solution:
             for neighbor in self.instance.get_target(i).get_neighbors_com():
                 if self.list_capt[neighbor] == 1 and not neighbor in path:
                     path.append(neighbor)
-        return len(path) == len(capts) + 1
+            if(len(path) == len(capts) + 1):
+                return True
+        return False
+
+    def is_comm_path2(self):
+        path = [0]
+        capts = {x for x in range(self.instance.size) if self.list_capt[x]==1}
+        for i in path:
+            neighbors = [x for x in self.instance.get_target(i).get_neighbors_com() \
+                            if x in capts]
+            path += neighbors
+            capts = capts.difference(neighbors)
+            if(len(capts) == 0):
+                return True
+        return False

@@ -21,9 +21,9 @@ time_construc_grid = time.time()
 
 instance.fill_neighbors()
 
-print("Targets :")
-for target in instance.get_targets():
-    print(target)
+# print("Targets :")
+# for target in instance.get_targets():
+#     print(target)
 
 
 time_neighbors = time.time()
@@ -40,8 +40,8 @@ time_random = time.time()
 
 print(solution.to_string())
 print("length: " + str(sum([1 for t in solution.list_capt if t == 1])))
-#solution.improve()
-solution.improve_random()
+time_nei, time_con = solution.improve()
+#solution.improve_random()
 print(solution.to_string())
 print("length: " + str(sum([1 for t in solution.list_capt if t == 1])))
 
@@ -58,6 +58,8 @@ print("Construction : " + str(time_construc_grid-time1))
 print("Voisins : " + str(time_neighbors-time_construc_grid))
 print("Génération : " + str(time_random-time_neighbors))
 print("Amélioration : " + str(time_improv-time_random))
+print("dont Removability : " + str(time_nei))
+print("dont Path : " + str(time_con))
 print("Admissibilité : " + str(time2-time_improv))
 print("Total : " + str(time2-time1))
 
