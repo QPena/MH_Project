@@ -99,9 +99,6 @@ class Solution:
 
 
     def generate_random_capt(self):
-        #for i in range(self.instance.size):
-        #    if random.random() < 0.4:
-        #        self.instance.get_target(i).setCapt(self.list_capt, self.list_count_capt)
         while sum([1 for t in self.list_count_capt if t == 0]) > 0 or not self.is_comm_path():
            self.set_capt(random.randrange(1,self.instance.size))
 
@@ -115,7 +112,6 @@ class Solution:
         neighbors = {0}
         add_neighbors(0)
         while sum([1 for t in self.list_count_capt if t == 0]) > 0:
-            maxi = [1, 5, 13, 29, 49, 81, 113, 149, 197, 253, 317, 377, 441]
             best_next = (-1,0)
             for neighbor in neighbors:
                 if self.list_capt[neighbor] == 1:
@@ -138,8 +134,8 @@ class Solution:
             if self.list_capt[t] == 0:
                 continue
             removable = False
+            time_init = time.time()
             if self.list_count_capt[t] > 0:
-                time_init = time.time()
                 removable = True
                 for n in self.instance.get_target(t).get_neighbors_capt():
                     if self.list_capt[n] == 0 and self.list_count_capt[n] < 2:

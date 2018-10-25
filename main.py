@@ -5,15 +5,15 @@ from instance import Instance
 from solution import Solution
 
 GRID_SIZE = 20
-R_CAPT = 2
-R_COM = 3
+R_CAPT = 1
+R_COM = 2
 
 instance = Instance(R_CAPT, R_COM)
 
 time1 = time.time()
 
-#instance.create_grid(GRID_SIZE)
-instance.create_from_file("Instances\\captANOR225_9_20.dat")
+instance.create_grid(GRID_SIZE)
+#instance.create_from_file("Instances\\captANOR225_9_20.dat")
 #instance.create_from_file("Instances\\captANOR400_10_80.dat")
 #instance.create_from_file("Instances\\captANOR1500_15_100.dat")
 #instance.create_from_file("Instances\\captANOR1500_21_500.dat")
@@ -40,11 +40,12 @@ time_random = time.time()
 
 time_init_alg = time.time()
 delta_alg = 0
+no_change_alg = 0
 
 best_solution = solution
 best_size = solution.get_size()
 
-while(delta_alg < 120):
+while(delta_alg < 5*60 and no_change_alg < 20):
 
     #print(solution.to_string())
     print("length: " + str(solution.get_size()))
@@ -68,12 +69,16 @@ while(delta_alg < 120):
     # Step 2 : Suite d'améliorations aléatoires (borne temporelle)
     time_init_loop = time.time()
     delta = 0
-    while(delta < 10):
+    no_change_loop = 0
+    while(delta < 20 and no_change_loop < 25):
         improved = copy.deepcopy(solution)
         improved.improve_random()
         if improved.get_size() < best_local_size:
             best_local_solution = improved
             best_local_size = improved.get_size()
+            no_change_loop = 0
+        else:
+            no_change_loop += 1
         # print("length: " + str(improved.get_size()))
         delta = time.time() - time_init_loop
 
@@ -81,10 +86,13 @@ while(delta_alg < 120):
     if best_local_size < best_size:
         best_solution = best_local_solution
         best_size = best_local_size
+        no_change_alg = 0
+    else:
+        no_change_alg += 1
     print("new best global best" + str(best_size) + "\n")
 
     solution = copy.deepcopy(best_solution)
-    solution.add_random_capt(100)
+    solution.add_random_capt(333)
     delta_alg = time.time() - time_init_alg
 
 
