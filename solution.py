@@ -11,6 +11,7 @@ class Solution:
         self.instance = instance
         self.list_capt = [0 for x in range(self.instance.size)]
         self.list_count_capt = [0 for x in range(self.instance.size)]
+        self.inremovables = []
 
     def get_size(self):
         return sum([1 for t in self.list_capt if t == 1])
@@ -119,13 +120,51 @@ class Solution:
                 xx = sum([1 for n in self.instance.get_target(neighbor).get_neighbors_capt() if self.list_capt[n]==0])
                 if xx > best_next[1]:
                     best_next = (neighbor, xx)
-                    #if xx == maxi[R_COM] - 2:
-                    #    break;
-            #self.instance.get_target(best_next[0]).setCapt(self.list_capt, self.list_count_capt)
             self.set_capt(best_next[0])
 
             if(best_next[0] == -1): break
             add_neighbors(best_next[0])
+
+    def is_removable(self, rank): # Peut ne pas conserver la connexité au sens de com
+        if self.list_count_capt[rank] > 0:
+                for n in self.instance.get_target(rank).get_neighbors_capt():
+                    if self.list_capt[n] == 0 and self.list_count_capt[n] < 2:
+                        return False
+                return True
+
+    def find_inremovables(self, capts = []):
+        self.inremovables = []
+        if len(capts) == 0:
+            capts = [x for x in range(self.instance.size) if self.list_capt[x]==1]
+        for capt in capts :
+            if not self.is_removable(capt):
+                self.inremovables.append(capt)
+            else:
+                self.set_capt(capt)
+                if not self.is_comm_path2():
+                    self.inremovables.append(capt)
+                self.set_capt(capt)
+
+
+    def improve2(self): # Improve with inremovables
+        time_1 = 0
+        time_2 = 0
+        for t in range(1, self.instance.size):
+            if self.list_capt[t] == 0:
+                continue
+            if t in self.inremovables:
+                continue
+            time_init = time.time()
+            removable = self.is_removable(t)
+            time_inter = time.time()
+            time_1 += time_inter - time_init
+            if removable:
+                self.set_capt(t)
+                if not self.is_comm_path2():
+                    self.set_capt(t)
+            time_out = time.time()
+            time_2 += time_out - time_inter
+        return time_1, time_2    
 
     def improve(self):
         time_1 = 0
@@ -165,6 +204,16 @@ class Solution:
                         removable = False
                         break;
             if removable:
+                self.set_capt(t)
+                if not self.is_comm_path2():
+                    self.set_capt(t)
+            capts.remove(t)
+
+    def improve_random2(self):
+        capts = [x for x in range(self.instance.size) if self.list_capt[x]==1 and x not in self.inremovables]
+        while len(capts) > 0:
+            t = capts[random.randrange(len(capts))]
+            if self.is_removable(t):
                 self.set_capt(t)
                 if not self.is_comm_path2():
                     self.set_capt(t)

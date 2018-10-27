@@ -4,6 +4,14 @@ import copy
 from instance import Instance
 from solution import Solution
 
+'''
+Stratégies :
+(300, 16000 / (n**0,75+100), 30, igb/4, 10 ou 25 ou 50)
+(300, 8000 / ..., 45, igb, ...)
+(300, 4000 / ..., 60, 4*igb, ...)
+'''
+
+
 R = [(1,1),(1,2),(2,2),(2,3)]
 GRID = [40] # [10,15,20,25,30,40]
 INST = ["Instances\\captANOR900_15_20.dat"]

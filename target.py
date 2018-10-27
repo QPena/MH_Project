@@ -23,7 +23,7 @@ class Target:
     def distance(self, target):
         (i,j) = self.coordinates
         (k,l) = target.coordinates
-        return math.sqrt((i-k)**2+(j-l)**2)
+        return math.sqrt((i-k)**2+(j-l) **2)
 
     def setCapt(self, list_capt, list_count_capt):
         if list_capt[self.n] == 0:
