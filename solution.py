@@ -15,7 +15,7 @@ class Solution:
         self.instance = instance # Instance
         self.list_capt = [0 for x in range(self.instance.size)] # 1 si capteur sur la cible i, 0 sinon
         self.list_count_capt = [0 for x in range(self.instance.size)] # nombre de capteurs couvrant la cible i
-        self.inremovables = [] # capteurs qui ne peuvent être retirés dans un voisin diminuant
+        self.criticals = [] # liste des capteurs critiques de la solution
 
 
     '''
@@ -129,7 +129,7 @@ class Solution:
     '''
     def add_random_capt(self, nb):
         # On enregistre les capteurs avant ajout
-        # Note : cela permet de limiter la recherche des "non retirables" à ces derniers
+        # Note : cela permet de limiter la recherche des capteurs critiques à ces derniers
         # En effet, les capteurs nouvellement ajoutés sont retirables par construction
         capts = [x for x in range(self.instance.size) if self.list_capt[x]==1]
 
@@ -140,8 +140,8 @@ class Solution:
             if self.list_capt[target] == 0:
                 self.set_capt(target)
             nb -=1
-        # On met à jour la liste des capteurs "non retirables"
-        self.find_inremovables(capts)
+        # On met à jour la liste des capteurs critiques
+        self.find_criticals(capts)
 
 
     '''
@@ -179,8 +179,8 @@ class Solution:
             if(best_next[0] == -1): break
             # On ajoute les voisins du nouveau capteur aux cibles à considérer
             add_neighbors(best_next[0])
-        # On met à jour la liste des capteurs "non retirables" de la solution générée
-        self.find_inremovables()
+        # On met à jour la liste des capteurs critiques de la solution générée
+        self.find_criticals()
 
 
     '''
@@ -200,25 +200,25 @@ class Solution:
 
 
     '''
-    Met à jour la liste des capteurs "non retirables" quel que soit l'ordre
+    Met à jour la liste des capteurs critiques
     capts : sous-liste des capteurs à considérer ; si non renseignée alors prendre l'ensemble des capteurs
     '''
-    def find_inremovables(self, capts = []):
-        self.inremovables = []
+    def find_criticals(self, capts = []):
+        self.criticals = []
         if len(capts) == 0:
             capts = [x for x in range(self.instance.size) if self.list_capt[x]==1]
         # Pour chaque capteur
         for capt in capts :
             # Si le retrait du capteur casse la couverture au sens de la captation, l'ajouter
             if not self.is_removable(capt):
-                self.inremovables.append(capt)
+                self.criticals.append(capt)
             # Sinon, s'il casse la chaîne de communication, l'ajouter
             else:
                 # On enlève le capteur
                 self.set_capt(capt)
                 # On teste la connexité du graphe de communication
                 if not self.is_comm_path():
-                    self.inremovables.append(capt)
+                    self.criticals.append(capt)
                 # On remet le capteur
                 self.set_capt(capt)
 
@@ -228,7 +228,7 @@ class Solution:
     '''
     def reduce(self):
         # Liste des capteurs "retirables"
-        capts = [x for x in range(self.instance.size) if self.list_capt[x]==1 and x not in self.inremovables]
+        capts = [x for x in range(self.instance.size) if self.list_capt[x]==1 and x not in self.criticals]
         # Sélection aléatoire des capteurs
         while len(capts) > 0:
             t = capts[random.randrange(len(capts))]
